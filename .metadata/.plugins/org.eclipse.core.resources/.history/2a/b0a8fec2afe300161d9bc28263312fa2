@@ -1,0 +1,9 @@
+package com.gbc.core;
+
+public final class GBCConstants {
+
+	public GBCConstants() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

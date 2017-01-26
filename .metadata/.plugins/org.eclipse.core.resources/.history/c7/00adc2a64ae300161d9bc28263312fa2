@@ -1,0 +1,65 @@
+package com.gbc.core;
+
+public final class TradeRecordInput 
+{
+	public static class TradeRecordInputBuilder()
+	{
+	}
+
+	public TradeRecordInput
+	{
+		private TradeRecordInput(String symbol, int quantity, boolean isBuy, double price) throws InvalidStockSymbolException
+		{
+			// get Stock for symbol
+			// if symbol is missing throw exception
+			
+			
+		}
+		
+		private final Stock _stock;
+		private final TradeRecord _record;
+	}
+	
+	public class TradeRecord(int quantity, boolean isBuy, double price) throws InvalidStockSymbolException
+	{
+		private TradeRecord()
+		{
+		_quantity = quantity;
+		_isBuy = isBuy;
+		_price = price;
+		_timeStamp = System.currentTimeMillis(); // change to nano seconds in Java 9
+		}
+		
+		public final int _quantity;
+		public final boolean _isBuy; 
+		public final double _price;
+		public final long _timeStamp;
+	}
+	public class InvalidStockSymbolException extends Exception {
+
+		public InvalidStockSymbolException() {
+			// TODO Auto-generated constructor stub
+		}
+
+		public InvalidStockSymbolException(String arg0) {
+			super(arg0);
+			// TODO Auto-generated constructor stub
+		}
+
+		public InvalidStockSymbolException(Throwable arg0) {
+			super(arg0);
+			// TODO Auto-generated constructor stub
+		}
+
+		public InvalidStockSymbolException(String arg0, Throwable arg1) {
+			super(arg0, arg1);
+			// TODO Auto-generated constructor stub
+		}
+
+		public InvalidStockSymbolException(String arg0, Throwable arg1, boolean arg2, boolean arg3) {
+			super(arg0, arg1, arg2, arg3);
+			// TODO Auto-generated constructor stub
+		}
+	}
+	
+}

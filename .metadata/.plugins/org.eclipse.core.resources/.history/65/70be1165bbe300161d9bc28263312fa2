@@ -1,0 +1,43 @@
+package com.gbc.core_unittests;
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.gbc.core.Trade;
+import com.gbc.core.*;
+
+public class TradeClassTests 
+{
+	Trade b1, b2, s1, s2, b3, s3;
+	
+	@Before
+	public void setUp() throws Exception 
+	{
+		b1 = Trade.TradeBuilder.createTrade(100, true, 100);
+		s1 = Trade.TradeBuilder.createTrade(100, false, 100);
+		b2 = Trade.TradeBuilder.createTrade(100, true, 100);
+		s2 = Trade.TradeBuilder.createTrade(100, false, 100);
+		b3 = Trade.TradeBuilder.createTrade(101, true, 100);
+		b3 = Trade.TradeBuilder.createTrade(101, false, 100);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void testEquals()
+	{
+		
+	}
+	
+	@Test
+	public void testHasCode() 
+	{
+		fail("Not yet implemented");
+	}
+
+}

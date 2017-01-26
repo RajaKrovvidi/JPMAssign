@@ -1,0 +1,13 @@
+package com.gbc.core;
+
+public class StockSymbolNotRegisteredException extends Exception {
+
+
+	public StockSymbolNotRegisteredException(TradeRecord record, String msg) 
+	{
+		super(msg);
+		_tradeRecord record;
+	}
+
+	public final TradeRecord _tradeRecord;
+}

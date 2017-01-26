@@ -1,0 +1,42 @@
+package com.gbc.core_unittests;
+
+
+import java.util.Collections;
+import java.util.Set;
+
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
+
+public class AllTestsRunner 
+{
+   public static void main(String[] args) 
+   {
+	   
+	  java.util.HashSet<String> s = null;
+	  Set<String> k = Collections.unmodifiableSet(s);
+	   
+	  System.out.println("Running StockTests ... ");
+      Result result = JUnitCore.runClasses(StockTests.class);
+		
+      for (Failure failure : result.getFailures()) 
+      {
+         System.out.println(failure.toString());
+      }
+		
+      if (result.wasSuccessful())
+    	  System.out.println("All CommonStock tests have passed");
+
+	  System.out.println("Running StockRegister Tests ... ");
+      result = JUnitCore.runClasses(StocksRegisterTests.class);
+		
+      for (Failure failure : result.getFailures()) 
+      {
+         System.out.println(failure.toString());
+      }
+		
+      if (result.wasSuccessful())
+    	  System.out.println("All StocksRegister tests have passed");
+   
+   }
+} 

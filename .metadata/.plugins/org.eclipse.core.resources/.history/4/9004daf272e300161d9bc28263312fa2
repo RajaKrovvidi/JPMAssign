@@ -1,0 +1,61 @@
+package com.gbc.core;
+
+/**
+ * Trade class, whose instances are immutable which are stored in the trade cache.
+ * @author RajaKrovvidi
+ *
+ */
+public final class Trade 
+{
+	/**
+	 * Builder class used to help build Trade objects
+	 * @author SekharJyoti
+	 *
+	 */
+	public static class TradeBuilder
+	{
+		public static Trade createTrade(int quantity, boolean isBuy, double price)
+		{
+			return new Trade(quantity, isBuy, price);
+		}
+
+		private static AtomicLong uniqueLong = new AtomicLong();
+	}
+	
+	private Trade(int quantity, boolean isBuy, double price)// throws IllegalArgumentException
+	{
+		// if (_quantity < 0)
+		_quantity = quantity;
+		_isBuy = isBuy;
+		_price = price;
+		_timeStamp = System.currentTimeMillis(); // change to nano seconds in Java 9
+	}
+
+	public final int getQuantity()
+	{
+		return _quantity;
+	}
+	
+	public final boolean isBuy()
+	{
+		return _isBuy;
+	}
+	
+	public final double getprice()
+	{
+		return _price;
+	}
+	
+	public final long getTimeStamp()
+	{
+		return _timeStamp;
+	}
+	
+	private final int _quantity;
+	private final boolean _isBuy; 
+	private final double _price;
+	private final long _timeStamp;
+	private final long _uniqueLong;
+	private static AtomicLong atomicLong;
+}
+	

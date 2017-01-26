@@ -1,0 +1,32 @@
+package com.gbc.core;
+
+import java.util.concurrent.ConcurrentSkipListSet;
+
+/*
+ * A class to register / cache all valid Stocks
+ */
+public final class StocksRegister 
+{
+	private static class RegistryHolder
+	{
+		 private static StocksRegister 	_register = new StocksRegister();
+	}
+	
+	public StocksRegister getInstance()
+	{
+		return RegistryHolder._register;
+	}
+	
+	private StocksRegister() 
+	{
+		_stocksSet = new ConcurrentSkipListSet<String>();
+	}
+	
+	public final void addStock(Stock stock)
+	{
+		
+	}
+	
+	private final ConcurrentSkipListSet<String> _stocksSet;
+	
+}

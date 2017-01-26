@@ -1,0 +1,85 @@
+package com.gbc.core.unit_tests;
+
+import static org.junit.Assert.*;
+
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.gbc.core.GBCCoreStaticInterface;
+
+public class VWAPandIndexTests {
+
+	@Before
+	public void setUp() throws Exception
+	{
+		GBCCoreStaticInterface.registerCommonStock("AAP1", 100, 0.05);
+		GBCCoreStaticInterface.registerCommonStock("AAP2", 110, 0.05);
+		/*
+		GBCCoreStaticInterface.registerCommonStock("AAP3", 120, 0.05);
+		GBCCoreStaticInterface.registerCommonStock("AAP4", 130, 0.05);
+		GBCCoreStaticInterface.registerCommonStock("AAP5", 140, 0.05);
+		GBCCoreStaticInterface.registerCommonStock("AAP6", 150, 0.05);
+		*/
+	}
+
+	@After
+	public void tearDown() throws Exception 
+	{
+	}
+
+	@Test
+	public void testVWAPForStock() throws Exception 
+	{
+		GBCCoreStaticInterface.recordTrade("AAP1", 10, true, 101);
+		GBCCoreStaticInterface.recordTrade("AAP1", 11, true, 102);
+		GBCCoreStaticInterface.recordTrade("AAP1", 12, true, 103);
+		GBCCoreStaticInterface.recordTrade("AAP1", 13, true, 104);
+		GBCCoreStaticInterface.recordTrade("AAP1", 14, true, 105);
+		GBCCoreStaticInterface.recordTrade("AAP2", 15, true, 80);
+		
+		double vwap1 = GBCCoreStaticInterface.getVWAPForSymbol("AAP1", System.currentTimeMillis() - 3000);
+		assertTrue(vwap1 == 6190/60);
+
+		GBCCoreStaticInterface.recordTrade("AAP2", 101, true, 82);
+		GBCCoreStaticInterface.recordTrade("AAP2", 102, true, 83);
+		GBCCoreStaticInterface.recordTrade("AAP2", 103, true, 84);
+		GBCCoreStaticInterface.recordTrade("AAP2", 104, true, 85);
+		GBCCoreStaticInterface.recordTrade("AAP2", 105, true, 85);
+
+		double vwap2 = GBCCoreStaticInterface.getVWAPForSymbol("AAP2", System.currentTimeMillis() - 3000);
+		assertTrue(vwap1 == 43270/515);
+		
+		//GBCCoreStaticInterface.getVWAPForSymbol("AAP1", System.currentTimeMillis() - 3000);
+		//fail("Not yet implemented");
+	}
+
+	@Test
+	public void testVWAPForStockTime() throws Exception 
+	{
+		GBCCoreStaticInterface.recordTrade("AAP1", 10, true, 101);
+		GBCCoreStaticInterface.recordTrade("AAP1", 11, true, 102);
+		GBCCoreStaticInterface.recordTrade("AAP1", 12, true, 103);
+		Thread.currentThread().sleep(3000);
+		GBCCoreStaticInterface.recordTrade("AAP1", 13, true, 104);
+		GBCCoreStaticInterface.recordTrade("AAP1", 14, true, 105);
+		GBCCoreStaticInterface.recordTrade("AAP2", 15, true, 80);
+		
+		double vwap1 = GBCCoreStaticInterface.getVWAPForSymbol("AAP1", System.currentTimeMillis() - 3000);
+		assertTrue(vwap1 == 6190/60);
+
+		GBCCoreStaticInterface.recordTrade("AAP2", 101, true, 82);
+		GBCCoreStaticInterface.recordTrade("AAP2", 102, true, 83);
+		GBCCoreStaticInterface.recordTrade("AAP2", 103, true, 84);
+		GBCCoreStaticInterface.recordTrade("AAP2", 104, true, 85);
+		GBCCoreStaticInterface.recordTrade("AAP2", 105, true, 85);
+
+		double vwap2 = GBCCoreStaticInterface.getVWAPForSymbol("AAP2", System.currentTimeMillis() - 3000);
+		assertTrue(vwap1 == 43270/515);
+		
+		//GBCCoreStaticInterface.getVWAPForSymbol("AAP1", System.currentTimeMillis() - 3000);
+		//fail("Not yet implemented");
+	}
+	
+}

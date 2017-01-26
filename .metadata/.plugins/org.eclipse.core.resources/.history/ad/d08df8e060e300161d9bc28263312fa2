@@ -1,0 +1,30 @@
+package com.gbc.core;
+
+public final class TradeRecordInput 
+{
+	public static class TradeRecordInputBuilder
+	{
+		public static TradeRecordInput createTradeRecordInput(String symbol, int quantity, boolean isBuy, double price) //throws InvalidStockSymbolException
+		{
+			return new RecordTradeInput(symbol, quantity, isBuy, price);	
+		}
+	}
+
+	public class RecordTradeInput
+	{
+		private RecordTradeInput(String symbol, int quantity, boolean isBuy, double price) throws InvalidStockSymbolException
+		{
+			if (symbol == null || symbol.isEmpty())
+				throw new InvalidStockSymbolException("Need a valid symbol");
+
+			_symbol = symbol;
+			_record = Trade.TradeBuilder.createTrade(quantity, isBuy, price);
+			
+		}
+		
+		private final String _symbol;
+		private final Trade _record;
+	}
+}
+	
+

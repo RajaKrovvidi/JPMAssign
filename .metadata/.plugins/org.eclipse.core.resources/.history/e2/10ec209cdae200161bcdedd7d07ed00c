@@ -1,0 +1,5 @@
+package com.gbc.core;
+
+public abstract class Asset {
+
+}

@@ -1,0 +1,45 @@
+package com.gbc.core;
+
+public final class TradeRecordInput 
+{
+	public static class TradeRecordInputBuilder
+	{
+		public static TradeRecordInput createTradeRecordInput(String symbol, int quantity, boolean isBuy, double price) throws InvalidStockSymbolException
+		{
+			return new TradeRecordInput(symbol, quantity, isBuy, price);	
+		}
+	}
+
+	public class TradeRecordInput
+	{
+		private TradeRecordInput(String symbol, int quantity, boolean isBuy, double price) throws InvalidStockSymbolException
+		{
+			// get Stock for symbol
+			// if symbol is missing throw exception
+			Stock s;
+			_record = new TradeRecord(quantity, isBuy, price);
+			
+		}
+		
+		private final Stock _stock;
+		private final TradeRecord _record;
+	}
+}
+	
+	public class TradeRecord 
+	{
+		private TradeRecord(int quantity, boolean isBuy, double price)
+		{
+			_quantity = quantity;
+			_isBuy = isBuy;
+			_price = price;
+			_timeStamp = System.currentTimeMillis(); // change to nano seconds in Java 9
+		}
+		
+		public final int _quantity;
+		public final boolean _isBuy; 
+		public final double _price;
+		public final long _timeStamp;
+	}
+	
+

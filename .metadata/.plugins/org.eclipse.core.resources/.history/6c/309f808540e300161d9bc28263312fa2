@@ -1,0 +1,124 @@
+package com.gbc.core;
+
+/*
+ * An immutable class that wil be used across threads to represent Stock objects
+ */
+public final class Stock 
+{
+	/**
+	 * A cl
+	 * @author Raja Krovvidi
+	 *
+	 */
+	public static class StockBuilder
+	{
+		public static Stock createCommonStock(String symbol, double parValue, double lastDividend) throws InvalidStockParameterException
+		{
+			return new Stock(symbol, true, parValue, lastDividend, 0.0);
+		}
+	
+		public static Stock createPreferredStock(String symbol, double parValue, double lastDividend, double fixedDividend) throws InvalidStockParameterException
+		{
+			return new Stock(symbol, false, parValue, lastDividend, fixedDividend);
+		}
+	}
+	
+	/*
+	 * By design we want to guarantee a well formed Stock instance.
+	 * We do eager checking of inputs and throw exceptions rather than validate at the time of adding new stocks
+	 * Hide the constructor.. mandate using the builder
+	 */
+	private Stock(String symbol, boolean isCommonStock, double parValue, double lastDividend, double fixedDividend ) 
+	throws InvalidStockParameterException
+	{
+		if (symbol.isEmpty()) throw new InvalidStockParameterException("symbol " + symbol + " is invalid");
+		if (parValue < 0.0) throw new InvalidStockParameterException("Par Value cannot be negative");
+		if (lastDividend < 0.0) throw new InvalidStockParameterException("Last Dividend cannot be negative");
+		if (fixedDividend < 0.0) throw new InvalidStockParameterException("Fixed Dividend cannot be negative");
+		
+		_symbol = symbol;
+		_parValue = parValue;
+		_lastDividend = lastDividend;
+		_fixedDividend = fixedDividend;
+		_isCommonStock = isCommonStock;
+	}
+	
+	public final String getName()
+	{
+		return (_isCommonStock) ? "COMMON_STOCK" : "PREFERRED_STOCK";
+	}
+	
+	public final double dividendYield(double price) throws IllegalArgumentException
+	{
+		if (price <= 0.0 ) throw new IllegalArgumentException("Price needs to be positive");
+
+		double dYield = 0.0;
+		if (_isCommonStock)
+		{
+			dYield = _lastDividend / price;
+		}
+		else
+		{
+			dYield = (_fixedDividend * _parValue) / price;
+		}
+		return dYield;
+	}
+	
+	public final double peRatio(double price) throws IllegalArgumentException
+	{
+		if (price < 0.0) 
+			throw new IllegalArgumentException("Price must be positive");
+		
+		double peRatio = 0.0;
+		if (_isCommonStock)
+		{
+			if (_lastDividend <= 0.0)
+				throw new IllegalArgumentException("Last Dividend must be postive for calculating P/E Ratio");
+				
+			peRatio =  price / _lastDividend;
+		}
+		else
+		{
+			if (_fixedDividend <= 0.0)
+				throw new IllegalArgumentException("Fixed Dividend must be postive for calculating P/E Ratio");
+			
+			peRatio =  price / _fixedDividend;
+		}
+		return peRatio;
+	}
+	
+	public final double vwap(long timeInMillis) throws IllegalArgumentException
+	{
+		if ( timeInMillis > System.currentTimeMillis()) 
+			throw new IllegalArgumentException("Do not support for future vwap");
+		
+		// TODO:
+		return 0.0;
+	}
+	
+	public final String getSymbol() 
+	{
+		return _symbol;
+	}
+	
+	public final double getParValue()
+	{
+		return _parValue;
+	}
+	
+	public final double getLastDividend()
+	{
+		return _lastDividend;
+	}
+	
+	public final double getFixedDividend()
+	{
+		return _fixedDividend;
+	}
+	
+	private final String _symbol;
+	private final double _parValue;
+	private final double _lastDividend;
+	private final double _fixedDividend;
+	private final boolean _isCommonStock;
+}

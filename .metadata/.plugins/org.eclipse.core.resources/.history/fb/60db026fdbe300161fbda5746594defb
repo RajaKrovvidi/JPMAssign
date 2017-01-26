@@ -1,0 +1,82 @@
+package com.gbc.core.unit_tests;
+
+import static org.junit.Assert.*;
+
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.gbc.core.GBCCoreStaticInterface;
+
+public class VWAPandIndexTests {
+
+	@Before
+	public void setUp() throws Exception
+	{
+		GBCCoreStaticInterface.registerCommonStock("AAP1", 100, 0.05);
+		GBCCoreStaticInterface.registerCommonStock("AAP2", 110, 0.05);
+		/*
+		GBCCoreStaticInterface.registerCommonStock("AAP3", 120, 0.05);
+		GBCCoreStaticInterface.registerCommonStock("AAP4", 130, 0.05);
+		GBCCoreStaticInterface.registerCommonStock("AAP5", 140, 0.05);
+		GBCCoreStaticInterface.registerCommonStock("AAP6", 150, 0.05);
+		*/
+	}
+
+	@After
+	public void tearDown() throws Exception 
+	{
+	}
+
+	@Test
+	public void testVWAPForStock() throws Exception 
+	{
+		GBCCoreStaticInterface.recordTrade("AAP1", 10, true, 101);
+		GBCCoreStaticInterface.recordTrade("AAP1", 11, true, 102);
+		GBCCoreStaticInterface.recordTrade("AAP1", 12, true, 103);
+		GBCCoreStaticInterface.recordTrade("AAP1", 13, true, 104);
+		GBCCoreStaticInterface.recordTrade("AAP1", 14, true, 105);
+		
+		double vwap1 = GBCCoreStaticInterface.getVWAPForSymbol("AAP1", System.currentTimeMillis());
+		assertTrue(vwap1 == 6190/60);
+
+		GBCCoreStaticInterface.recordTrade("AAP2", 101, true, 82);
+		GBCCoreStaticInterface.recordTrade("AAP2", 102, true, 83);
+		GBCCoreStaticInterface.recordTrade("AAP2", 103, true, 84);
+		GBCCoreStaticInterface.recordTrade("AAP2", 104, true, 85);
+		GBCCoreStaticInterface.recordTrade("AAP2", 105, true, 85);
+
+		double vwap2 = GBCCoreStaticInterface.getVWAPForSymbol("AAP2", System.currentTimeMillis());
+		assertTrue(vwap2 == 43270/515);
+		
+		double indexLevel = GBCCoreStaticInterface.getGBCAllStockIndex(System.currentTimeMillis());
+		assertTrue(indexLevel == java.lang.Math.pow((6190.0/60)*(43270/515), 0.5));
+	}
+
+	/*
+	@Test
+	public void testVWAPForStockTime() throws Exception 
+	{
+		// NB: Please set the GBCConstatns.CUTOFF_IN_MILLIS to a small no. before testing this.
+		GBCCoreStaticInterface.recordTrade("AAP1", 10, true, 101);
+		GBCCoreStaticInterface.recordTrade("AAP1", 11, true, 102);
+		System.out.println("Before sleeping");
+		Thread.sleep(3000);
+		GBCCoreStaticInterface.recordTrade("AAP1", 12, true, 103);
+		GBCCoreStaticInterface.recordTrade("AAP1", 13, true, 104);
+		GBCCoreStaticInterface.recordTrade("AAP1", 14, true, 105);
+		
+		double vwap1 = GBCCoreStaticInterface.getVWAPForSymbol("AAP1", System.currentTimeMillis());
+		System.out.println("Got vwap " + vwap1);
+		//assertTrue(vwap1 == 4058/39);
+
+		GBCCoreStaticInterface.recordTrade("AAP2", 101, true, 82);
+		GBCCoreStaticInterface.recordTrade("AAP2", 102, true, 83);
+		Thread.sleep(3000);
+		GBCCoreStaticInterface.recordTrade("AAP2", 103, true, 84);
+		GBCCoreStaticInterface.recordTrade("AAP2", 104, true, 85);
+		GBCCoreStaticInterface.recordTrade("AAP2", 105, true, 85);
+	}
+	*/
+}

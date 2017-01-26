@@ -1,0 +1,9 @@
+package com.gbc.core;
+
+public class CommonStock {
+
+	public CommonStock() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

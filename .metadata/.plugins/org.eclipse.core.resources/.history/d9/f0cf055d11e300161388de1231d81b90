@@ -1,0 +1,17 @@
+package com.gbc.core;
+
+public class PreferredStock extends Stock {
+
+	public PreferredStock(String symbol, double parValue, double lastDividend, double fixedDividend)
+			throws InvalidStockInputException {
+		super(symbol, parValue, lastDividend, fixedDividend);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

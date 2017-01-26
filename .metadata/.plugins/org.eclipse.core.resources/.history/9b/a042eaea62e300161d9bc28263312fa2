@@ -1,0 +1,100 @@
+package com.gbc.core_unittests;
+
+import static org.junit.Assert.*;
+
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.gbc.core.InvalidStockParameterException;
+import com.gbc.core.Stock;
+import com.gbc.core.Stock.StockBuilder;;
+
+
+public class StockTests 
+{
+	Stock commonStock1, commonStock2, preferredStock, preferredStock2;
+	
+	@Before
+	public void setUp() throws Exception 
+	{
+		commonStock1 = StockBuilder.createCommonStock("AA1", 100, 2);
+		commonStock2  = StockBuilder.createCommonStock("AA2", 100, 0);
+		
+		preferredStock = StockBuilder.createPreferredStock("AA3", 100, 2, 0.05);
+		
+	}
+
+	@After
+	public void tearDown() throws Exception 
+	{
+	}
+
+	@Test 
+	public void testEquals() throws InvalidStockParameterException
+	{
+		System.out.println("Testing Equals");
+		Stock c1 = StockBuilder.createCommonStock("AAB", 100, 1);
+		Stock c1a = StockBuilder.createCommonStock("AAB", 100, 1);
+		Stock c2 = StockBuilder.createCommonStock("AAB", 100, 2);
+		Stock p1 = StockBuilder.createPreferredStock("AAB", 100, 1,1);
+		Stock p1a = StockBuilder.createPreferredStock("AAB", 100, 1,1);
+		Stock p2 = StockBuilder.createPreferredStock("AAB", 100, 1,2);
+		System.out.println("Testing c1 equals c1a");
+		assertTrue(c1.equals(c1a));
+		System.out.println("Testing c1 equals c2");
+		assertFalse(c1.equals(c2));
+		System.out.println("Testing p1 equals p1a");
+		assertTrue(p1.equals(p1a));
+		System.out.println("Testing p1 equals p2");
+		assertFalse(p1.equals(p2));
+
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testCommonStockDividendYieldIllegal1() 
+	{
+		System.out.println("Testing Common Stocks Dividend Yield with price 0");
+	    commonStock1.dividendYield(0.0);
+	}
+
+	@Test
+	public void testPreferredStocksDividendYieldIllegal() {
+		System.out.println("Testing Preferred Stocks Dividend Yeild with instrument having last dividend set to 0");
+	    preferredStock.dividendYield(101);
+	}
+
+	@Test(expected = InvalidStockParameterException.class)
+	public void testPreferredStockConstructionWithIncorrectFixedDividend() throws InvalidStockParameterException 
+	{
+		System.out.println("Testing Preferred Stock Construction with fixed dividend of 0");
+		Stock x = StockBuilder.createPreferredStock("AA5", 100, 10, 0.0);
+	}
+
+	
+	@Test
+	public void testDividendYield()
+	{
+		System.out.println("Testing Dividend Yield for Common Stock with price 100");
+		assertTrue(commonStock1.dividendYield(100) == commonStock1.getLastDividend()/100);
+		System.out.println("Testing Dividend Yield for Common Stock with price 50");
+		assertTrue(commonStock1.dividendYield(50) == commonStock1.getLastDividend()/50);
+
+		System.out.println("Testing Dividend Yield for Preferred Stock with price 100");
+		assertTrue(preferredStock.dividendYield(100) == (preferredStock.getFixedDividend() * preferredStock.getParValue())/100);
+		System.out.println("Testing Dividend Yield for Preferred Stock with price 50");
+		assertTrue(preferredStock.dividendYield(50) == (preferredStock.getFixedDividend() * preferredStock.getParValue())/50);
+	}
+	
+	@Test
+	public void testPERatio()
+	{
+		System.out.println("Testing PE Ratio for Common Stock with price 100");
+		assertTrue(commonStock1.peRatio(100) == (100/commonStock1.getLastDividend()));
+		System.out.println("Testing PE Ratio for Common Stock with price 50");
+		assertTrue(commonStock1.peRatio(50) == (50/commonStock1.getLastDividend()));
+		System.out.println("Testing PE Ratio with price 50");
+		assertTrue(preferredStock.peRatio(50) == (50/preferredStock.getFixedDividend()));
+	}
+}

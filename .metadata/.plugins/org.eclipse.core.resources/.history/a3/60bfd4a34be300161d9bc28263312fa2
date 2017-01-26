@@ -1,0 +1,9 @@
+package com.gbc.core;
+
+public class InvalidStockSymbolException {
+
+	public InvalidStockSymbolException() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

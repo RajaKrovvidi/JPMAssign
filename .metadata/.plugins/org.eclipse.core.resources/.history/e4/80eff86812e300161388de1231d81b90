@@ -1,0 +1,9 @@
+package com.gbc.core;
+
+public class StockCalculationsHelper {
+
+	public StockCalculationsHelper() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

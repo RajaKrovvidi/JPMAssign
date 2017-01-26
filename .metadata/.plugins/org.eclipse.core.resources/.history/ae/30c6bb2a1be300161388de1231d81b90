@@ -1,0 +1,61 @@
+package com.gbc.core_unittests;
+
+import static org.junit.Assert.*;
+
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.gbc.core.Stock;
+import com.gbc.core.PreferredStock;
+
+
+public class PreferredStockTests 
+{
+	Stock wellFormed, illFormed;
+	
+	@Before
+	public void setUp() throws Exception 
+	{
+		wellFormed = new PreferredStock("AA1", 101, 2, 1);
+		illFormed = new PreferredStock("AA2", 102, 0.0, 0.0);
+	}
+
+	@After
+	public void tearDown() throws Exception 
+	{
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testDividendYieldIllegal1() {
+		System.out.println("Testing Ill Formed Dividend Yeild with price 0");
+	    wellFormed.dividendYield(0.0);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testDividendYieldIllegal2() {
+		System.out.println("Testing Dividend Yeild with price 0");
+	    wellFormed.dividendYield(0.0);
+	}
+	
+	@Test
+	public void testDividendYield()
+	{
+		System.out.println("Testing Dividend Yeild with price 100");
+		assertTrue(wellFormed.dividendYield(101) == 1);
+		System.out.println("Testing Dividend Yeild with price 50");
+		assertTrue(wellFormed.dividendYield(100) == 2);
+	}
+	
+	
+	@Test
+	public void testPERatio()
+	{
+		System.out.println("Testing PE Ratio with price 100");
+		assertTrue(wellFormed.peRatio(150) == 150.0);
+		//System.out.println("Testing PE Ratio with price 50");
+		//assertTrue(wellFormed.peRatio(50) == 25.0);
+	}
+
+}

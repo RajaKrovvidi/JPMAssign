@@ -1,0 +1,108 @@
+package com.gbc.core_unittests;
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.ConcurrentSkipListSet;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.gbc.core.InvalidStockParameterException;
+import com.gbc.core.RecordTradeInput;
+import com.gbc.core.StockSymbolNotRegisteredException;
+import com.gbc.core.StocksRegister;
+import com.gbc.core.Trade;
+import com.gbc.core.TradeCache;
+import com.gbc.core.Stock.StockBuilder;
+
+public class TradeCacheTests {
+
+	StocksRegister sr = null;
+	TradeCache tc = null;
+	
+	
+	public static void populateTradeCache(StocksRegister sRegister, TradeCache tCache, int nTrades) throws Exception
+	{
+		// for each stock entry in sr, 
+		// populate TradeCache with nTrades
+		ArrayList<Thread> ts = new ArrayList<Thread>();
+		Random rnd = new Random();
+		
+		try
+		{
+			for (String symbol: sRegister.getSymbols())
+			{
+				
+				for (int i =0; i < nTrades; ++i)
+				{
+					Thread thread = new Thread(new Runnable() 
+					{
+		
+					    @Override
+					    public void run() 
+					    {
+					    	
+					    	try 
+					    	{
+					    		int quantity = (int) (rnd.nextFloat() * 100);
+					    		int price = (int) (rnd.nextFloat() * 1000);
+					    		boolean isBuy = ((int)(rnd.nextFloat() * 2) % 2 == 0) ? true : false;
+					    		Trade trade = Trade.TradeBuilder.createTrade(quantity, isBuy, price);
+					    		tCache.recordTrade(symbol, trade);	
+								
+							}
+					    	catch (StockSymbolNotRegisteredException e)
+					    	{
+								// fail(e.getMessage());
+								//e.printStackTrace();
+							} 
+					    	catch (IllegalArgumentException e)
+					    	{
+								// fail(e.getMessage());
+								//e.printStackTrace();
+							} 
+					    }
+					            
+					});
+					ts.add(thread);
+					thread.start();
+				}
+			}	
+			for (int i = 0; i< ts.size(); ++i)
+				ts.get(i).join();
+			
+		}
+		catch(Exception e)
+		{
+			fail("Not yet implemented");
+		}
+
+		
+	}
+	
+	@Before
+	public void setUp() throws Exception 
+	{
+		// Get an instance
+		sr = StocksRegister.getInstance();
+		// Populate ..
+		ConcurrentSkipListSet<String> generatedSymbols = new ConcurrentSkipListSet<String>();
+		StocksRegisterTests.populateStocksRegister(sr, ts, 1000, generatedSymbols);
+		System.out.println("Populated stocks register with #Symbols " + generatedSymbols.size());
+		tc = TradeCache.getInstance();
+		
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void test() {
+		fail("Not yet implemented");
+	}
+
+}

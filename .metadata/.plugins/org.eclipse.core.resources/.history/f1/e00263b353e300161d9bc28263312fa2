@@ -1,0 +1,19 @@
+package com.gbc.core;
+
+/*
+ * A class to register / cache all valid Stocks
+ */
+public final class StocksRegister 
+{
+	private static class RegistryHolder()
+	{
+		
+	}
+	
+	private StocksRegister() 
+	{
+		_register = new ConcurrentSkipListSet<string>();
+	}
+
+	private final ConcurrentSkipListSet<String> _register;
+}

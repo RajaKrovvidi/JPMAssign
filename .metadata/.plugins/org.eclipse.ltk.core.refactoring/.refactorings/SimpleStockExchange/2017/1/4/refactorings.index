@@ -1,0 +1,42 @@
+1485333994780	Rename type 'SimpleStock'
+1485354870459	Move folder
+1485355738112	Delete element
+1485356803596	Rename type 'InvalidStockException'
+1485357981150	Delete element
+1485360327525	Rename method 'dividendYeild'
+1485375827588	Delete element
+1485375835788	Delete element
+1485377133271	Rename field 'goodCommonStock'
+1485377145773	Rename field 'badCommonStock'
+1485377166521	Rename field 'goodPreferredStock'
+1485377177083	Rename field 'badPreferredStock'
+1485377380570	Rename type 'InvalidStockInputException'
+1485378910141	Rename field 'preferredStock1'
+1485379305442	Rename type 'CommonStockTests'
+1485379313273	Delete element
+1485381645857	Rename compilation unit 'TradeRecord.java'
+1485383078898	Rename type 'TradeRecord'
+1485391685214	Rename type 'TradeRecordInput'
+1485392936471	Rename type 'StocksTestRunner'
+1485397339371	Copy compilation unit
+1485401085073	Rename local variable 'trades'
+1485401131113	Rename local variable 'trades'
+1485424492608	Rename local variable 'tradesMap'
+1485425672865	Rename field 'FIVE_MINS_IN_MILLIS'
+1485426398714	Copy compilation unit
+1485427471994	Copy compilation unit
+1485428994545	Rename local variable 'IndexLevel'
+1485433471328	Rename field '_record'
+1485435395759	Rename field 'stockToTradesMap'
+1485438342805	Rename type 'GBCCalcHelper'
+1485438450423	Rename type 'GBCCoreCalculations'
+1485438456373	Rename type 'GBCCoreCalculation'
+1485438525892	Delete element
+1485438939161	Rename compilation unit 'GBCCoreCalculations.java'
+1485439640937	Delete element
+1485440223948	Move compilation unit
+1485440233707	Move compilation unit
+1485440242583	Move compilation units
+1485440275205	Delete element
+1485440283515	Delete element
+1485444483348	Rename local variable 's'

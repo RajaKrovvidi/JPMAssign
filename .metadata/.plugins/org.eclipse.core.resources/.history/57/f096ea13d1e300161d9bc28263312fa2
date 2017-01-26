@@ -1,0 +1,69 @@
+package com.gbc.core_unittests;
+
+
+import java.util.Collections;
+import java.util.Set;
+
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
+
+public class AllTestsRunner 
+{
+   public static void main(String[] args) 
+   {
+	   
+	  java.util.HashSet<String> s = null;
+	  Set<String> k = Collections.unmodifiableSet(s);
+
+	  // Stock Tests
+	  System.out.println("Running StockTests ... ");
+      Result result = JUnitCore.runClasses(StockTests.class);
+		
+      for (Failure failure : result.getFailures()) 
+      {
+         System.out.println(failure.toString());
+      }
+		
+      if (result.wasSuccessful())
+    	  System.out.println("All Stock tests have passed");
+
+      // Running StockRegister Tests
+	  System.out.println("Running StockRegister Tests ... ");
+      result = JUnitCore.runClasses(StocksRegisterTests.class);
+		
+      for (Failure failure : result.getFailures()) 
+      {
+         System.out.println(failure.toString());
+      }
+		
+      if (result.wasSuccessful())
+    	  System.out.println("All StocksRegister tests have passed");
+
+      // Running Trade class tests
+	  System.out.println("Running Trade Tests ... ");
+      result = JUnitCore.runClasses(StocksRegisterTests.class);
+		
+      for (Failure failure : result.getFailures()) 
+      {
+         System.out.println(failure.toString());
+      }
+      
+      if (result.wasSuccessful())
+    	  System.out.println("All Trade class tests have passed");
+		
+      // Running Trade Cache tests
+	  System.out.println("Running TradeCache Tests ... ");
+      result = JUnitCore.runClasses(TradeCacheTests.class);
+		
+      for (Failure failure : result.getFailures()) 
+      {
+         System.out.println(failure.toString());
+      }
+      
+      if (result.wasSuccessful())
+    	  System.out.println("All StocksRegister tests have passed");
+
+      
+   }
+} 

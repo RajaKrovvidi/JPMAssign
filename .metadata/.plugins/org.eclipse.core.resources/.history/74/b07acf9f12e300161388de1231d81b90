@@ -1,0 +1,14 @@
+package com.gbc.core;
+
+public class StockCalculationsHelper {
+
+	/*
+	 * This is just a helper class.. No need for any to create an instance 
+	 */
+	private StockCalculationsHelper() {
+		
+	}
+	
+	double dividendYield(double price 
+
+}

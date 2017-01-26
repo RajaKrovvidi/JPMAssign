@@ -1,0 +1,11 @@
+package com.gbc.core;
+
+/*
+ * A top level abstract class to represent all assets
+ * whether financial or physical.
+ */
+public abstract class Asset {
+
+	public abstract String getName();
+}
+

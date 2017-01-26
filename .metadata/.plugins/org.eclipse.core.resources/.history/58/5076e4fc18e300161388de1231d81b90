@@ -1,0 +1,9 @@
+package com.gbc.core_unittests;
+
+public class StocksTestRunner {
+
+	public StocksTestRunner() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

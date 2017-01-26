@@ -1,0 +1,16 @@
+package com.gbc.core;
+
+public class PreferredStock extends Stock {
+
+	public PreferredStock(String symbol, double parValue, double lastDividend, double fixedDividend)
+			throws InvalidStockInputException {
+		super(symbol, parValue, lastDividend, fixedDividend);
+		_name = "PREFERRED_STOCK";
+	}
+
+	@Override
+	public String getName() {
+		return _null;
+	}
+	public final String _name;
+}

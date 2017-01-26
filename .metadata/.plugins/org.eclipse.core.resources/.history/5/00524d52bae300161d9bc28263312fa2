@@ -1,0 +1,80 @@
+package com.gbc.core;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentSkipListSet;
+
+public class GBCCalcHelper 
+{
+	private GBCCalcHelper() 
+	{
+		
+	}
+	
+	/*
+	 * A method to get weighted volume avg. price for a given stock and timestamp
+	 */
+	public static double getVWAPForSymbol(String symbol, long timestampMillis) throws NoTradesRecordedException ,CannotCalculateVWAPException
+	{
+		SortedSet<Trade> s = null;
+
+		try
+		{
+			s = TradeCache.getInstance().getUnmodifiableTradesSet(symbol);
+		}
+		catch(NullPointerException exp)
+		{
+			// It is good to throw an exception than silently return 0 / 1 for Index Level
+			throw new NoTradesRecordedException("Trades Cache/Store is empty.. please try again later");
+		}
+
+		return GBCCalcHelper.getVWAP(s, timestampMillis);
+	}
+
+	public static double getVWAP(Set<Trade> s, long timestampMillis) throws CannotCalculateVWAPException
+	{
+		double numerator = 0, denominator = 1.0;
+		
+		for (Trade t : s)
+		{
+			// DONT GO BEYOND FIVE MINS
+			if (t.getTimeStamp() - GBCConstants.CUTOFF_IN_MILLIS > timestampMillis )
+			{
+				System.out.println("Breaking from loop");
+				break;
+			}
+			numerator += t.getprice() * t.getQuantity();
+			denominator += t.getQuantity();
+		}
+
+		if (denominator == 0) // Should not happen
+			throw new CannotCalculateVWAPException("Net quantity is zero.. Either Cache is corrupt or has invalid entries!");
+		
+		double vwap = numerator / denominator;
+		
+		return vwap;
+	}
+
+	/*
+	 * A method to get GBC All Stock Index
+	 * We work with unmodifiable sorted sets
+	 */
+	public static double getGBCAllStockIndex(long timestampMillis) throws NoTradesRecordedException, CannotCalculateVWAPException
+	{
+		double indexLevel = 0.0;
+		
+		Collection<ConcurrentSkipListSet<Trade>> setOfTradeSets = TradeCache.getInstance().getAllUnmodifiableSetsOfTradeSets();
+		
+		double product = 1.0;
+		for (ConcurrentSkipListSet<Trade> trades : setOfTradeSets)
+		{
+			product *= GBCCalcHelper.getVWAP(trades, timestampMillis);
+		}
+		
+		indexLevel = java.lang.Math.pow(product, 1/(setOfTradeSets.size()));
+		return indexLevel;
+	}
+	
+}

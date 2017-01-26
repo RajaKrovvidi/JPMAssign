@@ -1,0 +1,99 @@
+package com.gbc.core;
+
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentSkipListSet;
+
+public final class GBCCoreCalculations 
+{
+	/*
+	 * Method to get dividend yield for a given stock symbol and price
+	 */
+	public static double getDividendYield(String symbol, double price ) throws InvalidStockSymbolException,IllegalArgumentException
+	{
+		return StocksRegister.getInstance().getStock(symbol).dividendYield(price);
+	}
+	
+	/*
+	 * Method to get P/E Ratio for a given stock symbol and price
+	 */
+	public static double getPERatio(String symbol, double price ) throws InvalidStockSymbolException, IllegalArgumentException
+	{
+		return StocksRegister.getInstance().getStock(symbol).peRatio(price);
+	}
+	
+	/*
+	 * A method to get weighted volume avg. price for a given stock and timestamp
+	 */
+	public static double getVWAPForSymbol(String symbol, long timestampMillis) throws NoTradesRecordedException ,CannotCalculateVWAPException
+	{
+		SortedSet<Trade> s = null;
+
+		try
+		{
+			s = TradeCache.getInstance().getUnmodifiableTradesSet(symbol);
+		}
+		catch(NullPointerException exp)
+		{
+			// It is good to throw an exception than silently return 0 / 1 for Index Level
+			throw new NoTradesRecordedException("Trades Cache/Store is empty.. please try again later");
+		}
+
+		return getVWAP(s, timestampMillis);
+	}
+
+
+	/*
+	 * A method to get GBC All Stock Index
+	 * We work with unmodifiable sets
+	 */
+	public static double getGBCAllStockIndex(long timestampMillis) throws NoTradesRecordedException, CannotCalculateVWAPException
+	{
+		Collection<ConcurrentSkipListSet<Trade>> setOfTradeSets = TradeCache.getInstance().getAllUnmodifiableSetsOfTradeSets();
+		
+		int nTradeSets = setOfTradeSets.size();
+		System.out.println("No of trade sets " + nTradeSets);
+		double indexLevel = 1;
+		double power = (1.0/nTradeSets);
+		for (ConcurrentSkipListSet<Trade> trades : setOfTradeSets)
+		{
+			double vwap = getVWAP(trades, timestampMillis);
+			double vwapPow = java.lang.Math.pow(vwap, power);
+			indexLevel *= vwapPow;
+		}
+		return indexLevel;
+	}
+
+	private static double getVWAP(Set<Trade> s, long timestampMillis) throws CannotCalculateVWAPException
+	{
+		double numerator = 0, denominator = 1.0;
+		
+		for (Trade t : s)
+		{
+			// DONT GO BEYOND FIVE MINS
+			if (t.getTimeStamp() - GBCConstants.CUTOFF_IN_MILLIS > timestampMillis )
+			{
+				System.out.println("Breaking from loop");
+				break;
+			}
+			numerator += t.getprice() * t.getQuantity();
+			denominator += t.getQuantity();
+		}
+
+		if (denominator == 0) // Should not happen
+			throw new CannotCalculateVWAPException("Net quantity is zero.. Either Cache is corrupt or has invalid entries!");
+		
+		double vwap = numerator / denominator;
+		
+		return vwap;
+	}
+	/*
+	 * We will never have an instance of this class
+	 */
+	private GBCCoreCalculations()
+	{
+		
+	}
+}

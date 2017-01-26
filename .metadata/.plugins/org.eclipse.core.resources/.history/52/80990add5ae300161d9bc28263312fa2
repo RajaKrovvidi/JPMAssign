@@ -1,0 +1,33 @@
+package com.gbc.core;
+
+import java.util.concurrent.ConcurrentSkipListSet;
+
+import org.cliffc.high_scale_lib.NonBlockingHashMap;
+
+/*
+ * A class to register / cache all valid Stocks
+ */
+public final class StocksRegister 
+{
+	private static class RegistryHolder
+	{
+		 private static StocksRegister 	_register = new StocksRegister();
+	}
+	
+	public StocksRegister getInstance()
+	{
+		return RegistryHolder._register;
+	}
+	
+	private StocksRegister() 
+	{
+		_stocksMap = new NonBlockingHashMap<String, Stock>();
+	}
+	
+	public final void addStock(String symbol, Stock stock)
+	{
+		_stocksMap.put(symbol, stock);
+	}
+	
+	private NonBlockingHashMap<String, Stock>  _stocksMap;
+}

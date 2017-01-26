@@ -1,0 +1,163 @@
+package com.gbc.core;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.lang.Math;
+
+import org.cliffc.high_scale_lib.NonBlockingHashMap;
+
+public final class TradeCache 
+{
+	private final static class CacheHolder
+	{
+		static final TradeCache tradeCache = new TradeCache();
+		// Constant value used in maps
+		static final String constString = "V";
+	}
+
+	public static TradeCache getInstance()
+	{
+		return CacheHolder.tradeCache;
+	}
+	
+	private TradeCache() 
+	{
+		stockToTradesMap = new NonBlockingHashMap<String, ConcurrentSkipListSet<Trade>>();
+	}
+	
+	/*
+	 * This method can be called when the Stocks Registry is updated.
+	 */
+	public final void addNewSymbolTradesPair(String symbol)
+	{
+		ConcurrentSkipListSet<Trade> tradesMap = stockToTradesMap.get(symbol);
+		
+		if (tradesMap == null) // Apply double check only when two threads want to create the value skiplist when not present
+		{
+			synchronized(this)
+			{
+				tradesMap = stockToTradesMap.get(symbol);
+				
+				if (tradesMap == null)
+				{
+					tradesMap = new ConcurrentSkipListSet<Trade>();
+					stockToTradesMap.put(symbol, tradesMap);
+				}
+			}
+		}
+	}
+	
+	@SuppressWarnings("static-access")
+	public final void recordTrade(String symbol, Trade trade) throws StockSymbolNotRegisteredException
+	{
+		ConcurrentSkipListSet<Trade> trades = stockToTradesMap.get(symbol);
+		
+		if (trades == null) // implies creating a Stock without registering it first. 
+		{
+			// Here we sleep 10 milliseconds grace period and retry
+			try
+			{
+				Thread.currentThread().sleep(10);
+				trades = stockToTradesMap.get(symbol);
+				
+				if (trades != null )
+					trades.add(trade);
+				
+			}
+			catch(InterruptedException exp)
+			{
+				// Do nothing
+			}
+			finally
+			{
+				if (trades == null)
+				{
+					String msg = new StringBuilder(symbol).append(" has not been registered. Please register the Stock and retry").toString();
+					throw new StockSymbolNotRegisteredException(trade, msg);	
+				}
+			}
+		} 
+		else // regular case - just record the trade
+		{
+			trades.add(trade);
+		}
+	}
+	
+	/**
+	 * The method to get an unmodifiable view of the unerlying which can be used by users to calculate vwAp
+	 * @param symbol
+	 * @return
+	 */
+	public final SortedSet<Trade> getTradesForSymbol(String symbol)
+	{
+		SortedSet<Trade> s = stockToTradesMap.get(symbol);
+		
+		if (s == null)
+			s = (SortedSet<Trade>) Collections.unmodifiableSet(new HashSet<Trade>()) ;
+		else 
+			s = (SortedSet<Trade>)Collections.unmodifiableSortedSet(s);
+		
+		return s;
+	}
+	
+	/*
+	 * A method to get weighted volume avg. price for a given stock
+	 */
+	public final double vwapForStock(String symbol, long timestampMillis) throws NoTradesRecordedException,CannotCalculateVWAPException
+	{
+		SortedSet<Trade> s = stockToTradesMap.get(symbol);
+
+		try
+		{
+			s = Collections.unmodifiableSortedSet(stockToTradesMap.get(symbol));
+		}
+		catch(NullPointerException exp)
+		{
+			// It is good to throw an exception than silently return 0 / 1 for Index Level
+			throw new NoTradesRecordedException("Trades Cache/Store is empty.. please try again later");
+		}
+
+		return GBCCalcHelper.getVWAP(s, timestampMillis);
+	}
+
+	/*
+	 * A method to get weighted volume price
+	 */
+	public final double Index(String symbol, long timestampMillis) throws NoTradesRecordedException,CannotCalculateVWAPException
+	{
+		double indexLevel = 0.0;
+		
+		Collection<ConcurrentSkipListSet<Trade>> setOfTradeSets;
+		try
+		{
+			setOfTradeSets = Collections.unmodifiableCollection(stockToTradesMap.values());
+		}
+		catch(NullPointerException exp)
+		{
+			 // Do we want to log this ? Guess not
+		}
+		finally
+		{
+			if (setOfTradeSets == null || setOfTradeSets.isEmpty() )
+			{
+				// It is good to throw an exception than silently return 0 / 1 for Index Level
+				throw new NoTradesRecordedException("Trades Cache/Store is empty.. please try again later");
+			}
+		}
+
+		double product = 1.0;
+		for (ConcurrentSkipListSet<Trade> trades : setOfTradeSets)
+		{
+			product *= GBCCalcHelper.getVWAP(trades, timestampMillis);
+		}
+		
+		indexLevel = pow(product, (1/setOfTradeSets.size()));
+		return indexLevel;
+	}
+	
+	private NonBlockingHashMap<String, ConcurrentSkipListSet<Trade> >  stockToTradesMap; 
+}

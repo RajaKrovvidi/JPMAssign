@@ -1,0 +1,138 @@
+package com.gbc.core;
+
+import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
+
+
+/**
+ * Trade class, whose instances are immutable which are stored in the trade cache.
+ * @author RajaKrovvidi
+ *
+ */
+public final class Trade implements Comparator<Trade>, Comparable<Trade> 
+{
+	/**
+	 * Builder class used to help build Trade objects
+	 * @author SekharJyoti
+	 *
+	 */
+	public static class TradeBuilder
+	{
+		public static Trade createTrade(int quantity, boolean isBuy, double price) throws IllegalArgumentException
+		{
+			return new Trade(quantity, isBuy, price);
+		}
+
+		
+		public static AtomicInteger atomicInt = new AtomicInteger();
+	}
+	
+	private Trade(int quantity, boolean isBuy, double price) throws IllegalArgumentException
+	{
+		
+		if (quantity <= 0)
+			throw new IllegalArgumentException(new StringBuilder("Quantity must be positive - input ").append(quantity).toString());
+
+		if (price < 0)
+			throw new IllegalArgumentException(new StringBuilder("Price cannot be negative - input ").append(price).toString());
+
+		_quantity = quantity;
+		_isBuy = isBuy;
+		_price = price;
+		_timeStamp = System.currentTimeMillis(); // change to nano seconds in Java 9
+		// Added purely to distinct elements with all of the above being same. 
+		_uniqueInt = TradeBuilder.atomicInt.incrementAndGet();
+	}
+
+	public final int getQuantity()
+	{
+		return _quantity;
+	}
+	
+	public final boolean isBuy()
+	{
+		return _isBuy;
+	}
+	
+	public final double getprice()
+	{
+		return _price;
+	}
+	
+	public final long getTimeStamp()
+	{
+		return _timeStamp;
+	}
+	
+	@Override
+	public int hashCode() 
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (_isBuy ? 1231 : 1237);
+		long temp;
+		temp = Double.doubleToLongBits(_price);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + _quantity;
+		result = prime * result + (int) (_timeStamp ^ (_timeStamp >>> 32));
+		result = prime * result + _uniqueInt;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) 
+	{
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Trade other = (Trade) obj;
+		if (_isBuy != other._isBuy) {
+			return false;
+		}
+		if (Double.doubleToLongBits(_price) != Double.doubleToLongBits(other._price)) {
+			return false;
+		}
+		if (_quantity != other._quantity) {
+			return false;
+		}
+		if (_timeStamp != other._timeStamp) {
+			return false;
+		}
+		if (_uniqueInt != other._uniqueInt) {
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * This method is used in SkipList to sort the elements
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public int compare(Trade o1, Trade o2) 
+	{
+		if (o1._timeStamp < o2._timeStamp ) return -1;
+		else if (o1._timeStamp == o2._timeStamp) 
+			return o1._uniqueInt < o2._uniqueInt? -1 : 1;
+		else return 1;
+	}
+
+	@Override
+	public int compareTo(Trade other)
+	{
+		return compare(this, other);
+	}
+
+	private final int _quantity;
+	private final boolean _isBuy; 
+	private final double _price;
+	private final long _timeStamp;
+	private final int _uniqueInt;
+}
+	

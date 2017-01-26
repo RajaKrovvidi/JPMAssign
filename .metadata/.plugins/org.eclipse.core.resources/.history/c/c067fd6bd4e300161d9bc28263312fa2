@@ -1,0 +1,10 @@
+package com.gbc.core;
+
+public final class GBCConstants {
+
+	private GBCConstants() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public static final long CUTOFF_IN_MILLIS = 5*60* 1000;  
+}

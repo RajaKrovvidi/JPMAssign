@@ -1,0 +1,15 @@
+package com.gbc.core;
+
+/*
+ * A class to register / cache all valid Stocks
+ */
+public final class StocksRegister 
+{
+
+	private StocksRegister() 
+	{
+		// TODO Auto-generated constructor stub
+	}
+
+	priavte ConcurrentSkipListSet<string>;
+}
